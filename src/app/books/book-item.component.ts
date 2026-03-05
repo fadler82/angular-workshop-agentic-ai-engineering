@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Book } from './book';
+import { ReadingListService } from './reading-list.service';
 
 @Component({
   selector: 'app-book-item',
@@ -31,6 +32,17 @@ import { Book } from './book';
           </p>
           <p *ngIf="book.isbn" class="text-xs text-gray-500 mt-2">ISBN: {{ book.isbn }}</p>
         </div>
+        <button
+          *ngIf="!isInReadingList()"
+          (click)="addToReadingList()"
+          class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded-md text-sm transition duration-200 w-full">
+          Add to reading list
+        </button>
+        <span
+          *ngIf="isInReadingList()"
+          class="mt-3 text-center text-sm text-green-600 font-medium py-1">
+          ✓ In reading list
+        </span>
       </div>
     </div>
   `
@@ -38,5 +50,13 @@ import { Book } from './book';
 export class BookItemComponent {
   @Input() book!: Book;
 
-  // No longer needed as we have a single author field
+  constructor(private readingListService: ReadingListService) {}
+
+  isInReadingList(): boolean {
+    return this.readingListService.isInReadingList(this.book.id);
+  }
+
+  addToReadingList(): void {
+    this.readingListService.addBook(this.book);
+  }
 }
